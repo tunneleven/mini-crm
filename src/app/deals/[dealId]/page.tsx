@@ -1,5 +1,7 @@
 import { CrmShell } from "@/components/crm-shell";
-import { DetailScaffold } from "@/components/crm-sections";
+import { DealDetail } from "@/components/deal-detail";
+import { getDealDetailPageData } from "@/lib/crm/page-data";
+import { notFound } from "next/navigation";
 
 type DealDetailPageProps = {
   params: Promise<{ dealId: string }>;
@@ -7,18 +9,19 @@ type DealDetailPageProps = {
 
 export default async function DealDetailPage({ params }: DealDetailPageProps) {
   const { dealId } = await params;
+  const data = await getDealDetailPageData(dealId);
+
+  if (!data) {
+    notFound();
+  }
 
   return (
     <CrmShell
       currentPath="/deals"
-      title="Deal detail shell"
-      copy="This view is positioned for stage controls, owner updates, related contacts, and timeline activity once the API and board task ship."
+      title="Deal detail workflow"
+      copy="Review the account context, update the core deal fields, and move the opportunity to the right stage without leaving the record."
     >
-      <DetailScaffold
-        title={`Deal ${dealId}`}
-        subtitle="The CRM shell is ready for stage movement, ownership, and activity context."
-        badges={["Stage control next", "Owner state next", "Timeline entry ready"]}
-      />
+      <DealDetail {...data} />
     </CrmShell>
   );
 }

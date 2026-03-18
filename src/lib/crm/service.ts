@@ -1175,3 +1175,47 @@ export async function searchRecords(request: NextRequest, input: SearchQueryInpu
     ],
   };
 }
+
+export async function listPipelines(request: NextRequest) {
+  const context = await resolveWorkspaceContext(request);
+
+  const pipelines = await prisma.pipeline.findMany({
+    where: {
+      workspaceId: context.workspaceId,
+    },
+    include: {
+      stages: {
+        orderBy: {
+          position: "asc",
+        },
+        include: {
+          _count: {
+            select: {
+              deals: {
+                where: {
+                  archivedAt: null,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    orderBy: [{ isDefault: "desc" }, { createdAt: "asc" }],
+  });
+
+  return {
+    items: pipelines.map((pipeline) => ({
+      id: pipeline.id,
+      name: pipeline.name,
+      isDefault: pipeline.isDefault,
+      stages: pipeline.stages.map((stage) => ({
+        id: stage.id,
+        name: stage.name,
+        kind: stage.kind,
+        position: stage.position,
+        dealCount: stage._count.deals,
+      })),
+    })),
+  };
+}
