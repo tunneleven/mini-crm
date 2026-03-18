@@ -1,12 +1,20 @@
 {
   "version": 1,
-  "currentState": "IDLE",
-  "feature": null,
+  "currentState": "CODE",
+  "feature": {
+    "name": "Mini CRM Application",
+    "slug": "mini-crm-application",
+    "description": "Mini CRM application"
+  },
   "mode": "research",
-  "startedAt": null,
-  "completedStates": [],
+  "startedAt": "2026-03-18",
+  "completedStates": [
+    "RESEARCH",
+    "SPEC",
+    "BEADS"
+  ],
   "failedAttempts": 0,
-  "beadsEpic": null,
+  "beadsEpic": "demo_hackathon_v3-8yl",
   "doltRemote": "https://doltremoteapi.dolthub.com/c4_tunn/mini-crm",
   "worktree": null,
   "prNumber": null,
