@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "currentState": "TEST",
+  "currentState": "REVIEW",
   "feature": {
     "name": "Mini CRM Application",
     "slug": "mini-crm-application",
@@ -12,12 +12,13 @@
     "RESEARCH",
     "SPEC",
     "BEADS",
-    "CODE"
+    "CODE",
+    "TEST"
   ],
-  "failedAttempts": 1,
+  "failedAttempts": 0,
   "beadsEpic": "demo_hackathon_v3-8yl",
   "doltRemote": "https://doltremoteapi.dolthub.com/c4_tunn/mini-crm",
   "worktree": null,
   "prNumber": null,
-  "lastError": "Coverage gate failed: 39.58% total coverage against 80% target"
+  "lastError": null
 }

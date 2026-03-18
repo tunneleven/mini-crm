@@ -32,6 +32,7 @@ vi.mock("@/lib/prisma", () => ({
 }));
 
 import { exportResourceCsv, importResourceCsv } from "@/lib/crm/import-export";
+import { importQuerySchema, parseImportResource } from "@/lib/crm/import-export-schemas";
 
 describe("import-export", () => {
   beforeEach(() => {
@@ -111,5 +112,92 @@ describe("import-export", () => {
         }),
       }),
     );
+  });
+
+  it("exports companies and deals as CSV", async () => {
+    mockPrisma.company.findMany.mockResolvedValue([
+      {
+        id: "company-1",
+        name: "Northline Health",
+        domain: "northline.health",
+        industry: "Healthcare",
+        website: "https://northline.health",
+        createdAt: new Date("2026-03-18T00:00:00.000Z"),
+        updatedAt: new Date("2026-03-18T12:00:00.000Z"),
+        owner: { name: "Kira Sloan" },
+        contacts: [
+          {
+            contact: { firstName: "Ari", lastName: "Mendoza" },
+          },
+        ],
+      },
+    ]);
+    mockPrisma.deal.findMany.mockResolvedValue([
+      {
+        id: "deal-1",
+        title: "Northline rollout",
+        amount: 12000,
+        currency: "USD",
+        closeDate: new Date("2026-04-01T00:00:00.000Z"),
+        createdAt: new Date("2026-03-18T00:00:00.000Z"),
+        updatedAt: new Date("2026-03-18T12:00:00.000Z"),
+        owner: { name: "Kira Sloan" },
+        pipeline: { name: "Sales Pipeline" },
+        stage: { name: "Proposal" },
+        companies: [{ company: { name: "Northline Health" } }],
+        contacts: [{ contact: { firstName: "Ari", lastName: "Mendoza" } }],
+      },
+    ]);
+
+    const companiesCsv = await exportResourceCsv("northstar-labs", "companies");
+    const dealsCsv = await exportResourceCsv("northstar-labs", "deals");
+
+    expect(companiesCsv).toContain("Northline Health");
+    expect(companiesCsv).toContain("Ari Mendoza");
+    expect(dealsCsv).toContain("Northline rollout");
+    expect(dealsCsv).toContain("Sales Pipeline");
+  });
+
+  it("imports companies by updating existing records", async () => {
+    mockPrisma.user.findFirst.mockResolvedValue({ id: "owner-1" });
+    mockPrisma.company.findFirst.mockResolvedValue({ id: "company-1" });
+    mockPrisma.company.update.mockResolvedValue({ id: "company-1" });
+
+    const csv = ["name,domain,industry,website,ownerEmail", "Northline Health,northline.health,Healthcare,https://northline.health,kira@northstarlabs.io"].join("\n");
+    const result = await importResourceCsv("northstar-labs", "companies", csv);
+
+    expect(result.summary).toEqual({
+      totalRows: 1,
+      createdRows: 0,
+      updatedRows: 1,
+      failedRows: 0,
+    });
+    expect(mockPrisma.company.update).toHaveBeenCalled();
+  });
+
+  it("imports deals and reports stage or owner failures", async () => {
+    mockPrisma.user.findFirst.mockResolvedValueOnce({ id: "owner-1" }).mockResolvedValueOnce(null);
+    mockPrisma.pipeline.findFirst.mockResolvedValue({
+      id: "pipeline-sales",
+      name: "Sales Pipeline",
+      stages: [{ id: "stage-proposal", name: "Proposal" }],
+    });
+    mockPrisma.deal.findFirst.mockResolvedValue(null);
+    mockPrisma.deal.create.mockResolvedValue({ id: "deal-1" });
+
+    const successCsv = ["title,amount,currency,closeDate,ownerEmail,pipelineName,stageName", "Northline rollout,12000,usd,2026-04-01,kira@northstarlabs.io,Sales Pipeline,Proposal"].join("\n");
+    const success = await importResourceCsv("northstar-labs", "deals", successCsv);
+    expect(success.summary.createdRows).toBe(1);
+
+    const failureCsv = ["title,amount,currency,ownerEmail,pipelineName,stageName", "Broken deal,1000,usd,missing@northstarlabs.io,Sales Pipeline,Proposal"].join("\n");
+    const failure = await importResourceCsv("northstar-labs", "deals", failureCsv);
+    expect(failure.summary.failedRows).toBe(1);
+    expect(failure.errors[0].message).toContain("Owner missing@northstarlabs.io was not found");
+  });
+
+  it("parses import resource and query values", () => {
+    expect(parseImportResource("contacts")).toBe("contacts");
+    expect(importQuerySchema.parse({ includeArchived: "true" })).toEqual({ includeArchived: true });
+    expect(importQuerySchema.parse({ includeArchived: "false" })).toEqual({ includeArchived: false });
   });
 });
