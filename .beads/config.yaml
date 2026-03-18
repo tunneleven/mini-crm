@@ -21,7 +21,7 @@
 #   title-length: 255
 
 # Default actor for audit trails (overridden by BD_ACTOR or --actor)
-# actor: ""
+actor: "tunn"
 
 # Export events (audit trail) to .beads/events.jsonl on each flush/sync
 # When enabled, new events are appended incrementally using a high-water mark.
@@ -52,3 +52,5 @@
 # - linear.api-key
 # - github.org
 # - github.repo
+
+backup.enabled: true

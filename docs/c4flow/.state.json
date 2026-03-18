@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "currentState": "IDLE",
+  "feature": null,
+  "mode": "research",
+  "startedAt": null,
+  "completedStates": [],
+  "failedAttempts": 0,
+  "beadsEpic": null,
+  "doltRemote": "https://doltremoteapi.dolthub.com/c4_tunn/mini-crm",
+  "worktree": null,
+  "prNumber": null,
+  "lastError": null
+}
