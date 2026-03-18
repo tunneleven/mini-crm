@@ -14,10 +14,10 @@
     "BEADS",
     "CODE"
   ],
-  "failedAttempts": 0,
+  "failedAttempts": 1,
   "beadsEpic": "demo_hackathon_v3-8yl",
   "doltRemote": "https://doltremoteapi.dolthub.com/c4_tunn/mini-crm",
   "worktree": null,
   "prNumber": null,
-  "lastError": null
+  "lastError": "Coverage gate failed: 39.58% total coverage against 80% target"
 }
