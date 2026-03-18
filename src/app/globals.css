@@ -236,7 +236,10 @@ main {
 .hero-grid,
 .record-grid,
 .details-grid,
-.stats-grid {
+.stats-grid,
+.import-grid,
+.stage-summary-list,
+.export-grid {
   display: grid;
   gap: 20px;
 }
@@ -340,6 +343,91 @@ main {
   font-size: 0.72rem;
 }
 
+.stage-summary-row {
+  display: grid;
+  gap: 8px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.stage-summary-row:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.export-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.export-link {
+  display: grid;
+  gap: 4px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.72);
+  padding: 16px;
+}
+
+.export-link strong {
+  font-size: 1rem;
+}
+
+.export-link span {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.export-link.compact {
+  justify-self: start;
+}
+
+.import-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 20px;
+}
+
+.import-card {
+  display: grid;
+  gap: 14px;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.74);
+  padding: 18px;
+}
+
+.import-form {
+  display: grid;
+  gap: 12px;
+}
+
+.import-result {
+  display: grid;
+  gap: 8px;
+}
+
+.import-errors {
+  display: grid;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.import-error-row {
+  border-radius: 14px;
+  background: rgba(191, 75, 87, 0.08);
+  padding: 12px;
+}
+
+.import-error-row p {
+  color: var(--danger);
+}
+
+.metric-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
 .trend-up,
 .status-open {
   background: rgba(35, 111, 94, 0.12);
@@ -366,6 +454,22 @@ main {
   border: 1px solid var(--line);
   background: rgba(255, 255, 255, 0.72);
   padding: 16px;
+}
+
+.composer-stack,
+.detail-stack,
+.timeline-meta-row {
+  display: grid;
+  gap: 12px;
+}
+
+.composer-stack {
+  margin-top: 4px;
+}
+
+.input-textarea {
+  min-height: 120px;
+  resize: vertical;
 }
 
 .inline-link:hover {
@@ -455,6 +559,37 @@ main {
 
 .deal-action-row {
   grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.timeline-meta-row {
+  grid-template-columns: repeat(auto-fit, minmax(120px, max-content));
+  align-items: center;
+}
+
+.timeline-overdue {
+  width: fit-content;
+  border-radius: 999px;
+  padding: 5px 8px;
+  background: rgba(191, 75, 87, 0.14);
+  color: var(--danger);
+  font-family: var(--font-mono), monospace;
+  font-size: 0.7rem;
+}
+
+.timeline-badge {
+  background: rgba(19, 34, 49, 0.08);
+}
+
+.timeline-note {
+  color: var(--accent);
+}
+
+.timeline-task {
+  color: var(--emerald);
+}
+
+.timeline-activity {
+  color: var(--ink);
 }
 
 .ghost-button,
@@ -564,7 +699,9 @@ main {
   .details-grid,
   .stats-grid,
   .field-grid,
-  .fact-grid {
+  .fact-grid,
+  .import-grid,
+  .export-grid {
     grid-template-columns: 1fr;
   }
 
@@ -605,7 +742,9 @@ main {
   }
 
   .board-columns,
-  .deal-action-row {
+  .deal-action-row,
+  .export-grid,
+  .import-grid {
     grid-template-columns: 1fr;
   }
 }

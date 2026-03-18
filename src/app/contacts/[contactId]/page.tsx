@@ -1,5 +1,8 @@
 import { CrmShell } from "@/components/crm-shell";
-import { DetailScaffold } from "@/components/crm-sections";
+import { RecordEngagementPanel } from "@/components/record-engagement-panel";
+import { getContactEngagementPageData } from "@/lib/crm/engagement-page-data";
+import Link from "next/link";
+import { notFound } from "next/navigation";
 
 type ContactDetailPageProps = {
   params: Promise<{ contactId: string }>;
@@ -7,18 +10,58 @@ type ContactDetailPageProps = {
 
 export default async function ContactDetailPage({ params }: ContactDetailPageProps) {
   const { contactId } = await params;
+  const data = await getContactEngagementPageData(contactId);
+
+  if (!data) {
+    notFound();
+  }
 
   return (
     <CrmShell
       currentPath="/contacts"
-      title="Contact detail shell"
-      copy="Prepared for notes, tasks, company associations, and owner updates once the core APIs land."
+      title={`${data.record.title} · Contact detail`}
+      copy="Notes, tasks, activities, and timeline history are now tied to the contact record itself."
     >
-      <DetailScaffold
-        title={`Contact ${contactId}`}
-        subtitle="This detail scaffold is wired for timeline, task, and relationship blocks."
-        badges={["Owner slot ready", "Timeline slot ready", "Company links next"]}
-      />
+      <div className="page-grid">
+        <section className="hero-grid">
+          <article className="hero-card">
+            <span className="eyebrow">Contact record</span>
+            <h2>{data.record.title}</h2>
+            <p>
+              {data.record.subtitle} · {data.record.meta}
+            </p>
+          </article>
+
+          <article className="card">
+            <div className="card-head">
+              <div>
+                <h2>Related records</h2>
+                <p>Ownership and linked accounts stay visible beside the engagement history.</p>
+              </div>
+              <span className="eyebrow">Context</span>
+            </div>
+            <div className="record-list">
+              {data.summary.map((item) => (
+                <Link key={item.id} className="record-row" href={item.href}>
+                  <div className="record-row-head">
+                    <span className="record-title">{item.title}</span>
+                    <span className="tiny-badge">{item.subtitle}</span>
+                  </div>
+                  <p className="subtle">{item.meta}</p>
+                </Link>
+              ))}
+            </div>
+          </article>
+        </section>
+
+        <RecordEngagementPanel
+          targetType="contact"
+          targetId={data.target.id}
+          timeline={data.timeline}
+          tasks={data.tasks}
+          ownerOptions={data.ownerOptions}
+        />
+      </div>
     </CrmShell>
   );
 }

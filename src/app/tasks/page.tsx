@@ -1,40 +1,22 @@
 import { CrmShell } from "@/components/crm-shell";
-import { SidebarCard } from "@/components/crm-sections";
-import { taskRows } from "@/lib/mock-data";
+import { TaskWorkbench } from "@/components/task-workbench";
+import { getTaskWorkspacePageData } from "@/lib/crm/engagement-page-data";
 
-export default function TasksPage() {
+export default async function TasksPage() {
+  const data = await getTaskWorkspacePageData();
+
   return (
     <CrmShell
       currentPath="/tasks"
-      title="Follow-up work lined up for the next implementation wave"
-      copy="Tasks are visible in the shell now so the timeline and reminder slice can plug into a stable route and interaction pattern."
+      title="Follow-up work with overdue visibility"
+      copy="Workspace tasks are now real records with due dates, assignees, and completion state."
     >
-      <div className="record-grid">
-        <article className="table-card">
-          <div className="card-head">
-            <div>
-              <h2>Task list shell</h2>
-              <p>Placeholder task state for overdue, in-flight, and upcoming follow-up.</p>
-            </div>
-            <span className="eyebrow">Tasks</span>
-          </div>
-          <div className="table-shell">
-            {taskRows.map((task) => (
-              <div key={task.title} className="record-row">
-                <div className="record-row-head">
-                  <span className="record-title">{task.title}</span>
-                  <span className={`status-pill status-${task.tone}`}>{task.tone}</span>
-                </div>
-                <p className="subtle">{task.subtitle}</p>
-              </div>
-            ))}
-          </div>
-        </article>
-        <SidebarCard
-          title="Timeline dependency"
-          copy="This route is intentionally simple in wave one. The notes, tasks, and timeline task can now reuse the shared record row and detail patterns instead of inventing them later."
-        />
-      </div>
+      <TaskWorkbench
+        tasks={data.tasks}
+        owners={data.owners}
+        summary={data.summary}
+        currentUserId={data.currentUser.id}
+      />
     </CrmShell>
   );
 }

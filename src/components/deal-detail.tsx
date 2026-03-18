@@ -4,9 +4,13 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
+import { RecordEngagementPanel } from "@/components/record-engagement-panel";
+import type { EngagementPageData } from "@/lib/crm/engagement-page-data";
 import type { DealDetailPageData, DealRecord } from "@/lib/crm/page-data";
 
-type DealDetailProps = DealDetailPageData;
+type DealDetailProps = DealDetailPageData & {
+  engagement: EngagementPageData;
+};
 
 function formatCurrency(amount: number | null, currency: string) {
   if (amount === null) {
@@ -44,7 +48,7 @@ function getPrimaryCompany(deal: DealRecord) {
   return deal.companies.find((company) => company.isPrimary) ?? deal.companies[0] ?? null;
 }
 
-export function DealDetail({ deal: initialDeal, ownerOptions, stageOptions }: DealDetailProps) {
+export function DealDetail({ deal: initialDeal, ownerOptions, stageOptions, engagement }: DealDetailProps) {
   const router = useRouter();
   const [deal, setDeal] = useState(initialDeal);
   const [title, setTitle] = useState(initialDeal.title);
@@ -291,6 +295,14 @@ export function DealDetail({ deal: initialDeal, ownerOptions, stageOptions }: De
           </div>
         </article>
       </section>
+
+      <RecordEngagementPanel
+        targetType="deal"
+        targetId={deal.id}
+        timeline={engagement.timeline}
+        tasks={engagement.tasks}
+        ownerOptions={ownerOptions}
+      />
     </div>
   );
 }

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "currentState": "CODE",
+  "currentState": "TEST",
   "feature": {
     "name": "Mini CRM Application",
     "slug": "mini-crm-application",
@@ -11,7 +11,8 @@
   "completedStates": [
     "RESEARCH",
     "SPEC",
-    "BEADS"
+    "BEADS",
+    "CODE"
   ],
   "failedAttempts": 0,
   "beadsEpic": "demo_hackathon_v3-8yl",

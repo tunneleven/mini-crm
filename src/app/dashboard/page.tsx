@@ -1,14 +1,21 @@
 import { CrmShell } from "@/components/crm-shell";
-import { DashboardSection } from "@/components/crm-sections";
+import { DashboardMetricsView } from "@/components/dashboard-metrics";
+import { ImportExportPanel } from "@/components/import-export-panel";
+import { getDashboardMetrics } from "@/lib/crm/dashboard-metrics";
+import { resolveWorkspaceIdFromServer } from "@/lib/crm/workspace";
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const workspaceId = await resolveWorkspaceIdFromServer();
+  const data = await getDashboardMetrics({ workspaceId });
+
   return (
     <CrmShell
       currentPath="/dashboard"
       title="Command center for a cleaner revenue rhythm"
-      copy="A workspace-scoped dashboard shell for open deals, overdue follow-up, and fast access to core CRM records."
+      copy="A workspace-scoped dashboard for open deals, overdue follow-up, recent activity, and CSV imports."
     >
-      <DashboardSection />
+      <DashboardMetricsView data={data} />
+      <ImportExportPanel />
     </CrmShell>
   );
 }
